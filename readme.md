@@ -1,0 +1,1 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/i9lilyiy8fvanvyb?svg=true)](https://ci.appveyor.com/project/ValentinFS/ajava-1-2-1)
