@@ -51,7 +51,6 @@ public class WebFormTest {
         driver.findElement(By.cssSelector("[type='tel']")).sendKeys("+79161234567");
         driver.findElement(By.cssSelector("[class='checkbox__box']")).click();
         driver.findElement(By.cssSelector("button")).click();
-        //   String actualMessage = driver.findElement(By.cssSelector("[class='input_invalid'][class=’input__sub’]")).getText();
         String actualMessage = driver.findElement(By.cssSelector(".input_invalid .input__sub")).getText();
         String expectedMessage = "Поле обязательно для заполнения";
         Assertions.assertEquals(expectedMessage, actualMessage.trim());
@@ -64,7 +63,6 @@ public class WebFormTest {
         driver.findElement(By.cssSelector("[type='text']")).sendKeys("Петров Петр");
         driver.findElement(By.cssSelector("[class='checkbox__box']")).click();
         driver.findElement(By.cssSelector("button")).click();
-        //   String actualMessage = driver.findElement(By.cssSelector("[class='input_invalid'][class=’input__sub’]")).getText();
         String actualMessage = driver.findElement(By.cssSelector(".input_invalid .input__sub")).getText();
         String expectedMessage = "Поле обязательно для заполнения";
         Assertions.assertEquals(expectedMessage, actualMessage.trim());
@@ -119,7 +117,7 @@ public class WebFormTest {
         driver.findElement(By.cssSelector("[class='checkbox__box']")).click();
         driver.findElement(By.cssSelector("button")).click();
         String actualMessage = driver.findElement(By.cssSelector("[data-test-id='order-success']")).getText();
-        String expectedMessage = "Имя и Фамилия указаные неверно. Недопустимы дефисы в начале и конце Фамилии и Имени";
+        String expectedMessage = "Имя и Фамилия указаны неверно. Недопустимы дефисы не разделяющие Фамилию или Имя";
         Assertions.assertEquals(expectedMessage, actualMessage.trim());
     }
 
@@ -132,7 +130,7 @@ public class WebFormTest {
         driver.findElement(By.cssSelector("[class='checkbox__box']")).click();
         driver.findElement(By.cssSelector("button")).click();
         String actualMessage = driver.findElement(By.cssSelector("[data-test-id='order-success']")).getText();
-        String expectedMessage = "Имя и Фамилия указаные неверно. Недопустимы повторяющиеся дефисы";
+        String expectedMessage = "Имя и Фамилия указаны неверно. Недопустимы повторяющиеся дефисы";
         Assertions.assertEquals(expectedMessage, actualMessage.trim());
     }
 
@@ -146,7 +144,7 @@ public class WebFormTest {
         driver.findElement(By.cssSelector("[class='checkbox__box']")).click();
         driver.findElement(By.cssSelector("button")).click();
         String actualMessage = driver.findElement(By.cssSelector("[data-test-id='order-success']")).getText();
-        String expectedMessage = "Имя и Фамилия указаные неверно. Фамилия и Имя должны разделяться пробелом";
+        String expectedMessage = "Имя и Фамилия указаны неверно. Фамилия и Имя должны разделяться пробелом";
         Assertions.assertEquals(expectedMessage, actualMessage.trim());
     }
 
@@ -159,7 +157,7 @@ public class WebFormTest {
         driver.findElement(By.cssSelector("[class='checkbox__box']")).click();
         driver.findElement(By.cssSelector("button")).click();
         String actualMessage = driver.findElement(By.cssSelector("[data-test-id='order-success']")).getText();
-        String expectedMessage = "Имя и Фамилия указаные неверно. Слишком много символов.";
+        String expectedMessage = "Имя и Фамилия указаны неверно. Слишком много символов.";
         Assertions.assertEquals(expectedMessage, actualMessage.trim());
     }
 
