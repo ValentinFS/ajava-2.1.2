@@ -3,11 +3,8 @@ package ru.netology;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-
-import java.util.List;
 
 
 public class WebFormTest {
@@ -31,33 +28,164 @@ public class WebFormTest {
 
     @AfterEach
     void tearDown() {
-        driver.quit();
-        driver = null;
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+
+
+    @Test
+        // Все поля пустые
+    void shouldTestAllFieldsEmpty() {
+        driver.get("http://localhost:9999/");
+        driver.findElement(By.cssSelector("button")).click();
+        String actualMessage = driver.findElement(By.cssSelector(".input_invalid .input__sub")).getText();
+        String expectedMessage = "Поле обязательно для заполнения";
+        Assertions.assertEquals(expectedMessage, actualMessage.trim());
     }
 
     @Test
-    void shouldTestWrongName() {
+        // Пустое поле ФИО
+    void shouldTestNameEmpty() {
         driver.get("http://localhost:9999/");
-        List<WebElement> textFields = driver.findElements(By.className("input__control"));
-        textFields.get(0).sendKeys("Vasya");
-        textFields.get(1).sendKeys("+71231234567");
-        driver.findElement(By.className("checkbox__box")).click();
-        driver.findElement(By.tagName("button")).click();
-        String actualMessage = driver.findElement(By.className("input__sub")).getText();
+        driver.findElement(By.cssSelector("[type='tel']")).sendKeys("+79161234567");
+        driver.findElement(By.cssSelector("[class='checkbox__box']")).click();
+        driver.findElement(By.cssSelector("button")).click();
+        //   String actualMessage = driver.findElement(By.cssSelector("[class='input_invalid'][class=’input__sub’]")).getText();
+        String actualMessage = driver.findElement(By.cssSelector(".input_invalid .input__sub")).getText();
+        String expectedMessage = "Поле обязательно для заполнения";
+        Assertions.assertEquals(expectedMessage, actualMessage.trim());
+    }
+
+    @Test
+        // Пустое поле Тел
+    void shouldTestTelEmpty() {
+        driver.get("http://localhost:9999/");
+        driver.findElement(By.cssSelector("[type='text']")).sendKeys("Петров Петр");
+        driver.findElement(By.cssSelector("[class='checkbox__box']")).click();
+        driver.findElement(By.cssSelector("button")).click();
+        //   String actualMessage = driver.findElement(By.cssSelector("[class='input_invalid'][class=’input__sub’]")).getText();
+        String actualMessage = driver.findElement(By.cssSelector(".input_invalid .input__sub")).getText();
+        String expectedMessage = "Поле обязательно для заполнения";
+        Assertions.assertEquals(expectedMessage, actualMessage.trim());
+    }
+
+    @Test
+        // Не нажат чек-бокс
+    void shouldTestCheckBoxEmpty() {
+        driver.get("http://localhost:9999/");
+        driver.findElement(By.cssSelector("[type='text']")).sendKeys("Петров Петр");
+        driver.findElement(By.cssSelector("[type='tel']")).sendKeys("+79161234567");
+        driver.findElement(By.cssSelector("button")).click();
+        String actualMessage = driver.findElement(By.cssSelector(".checkbox__text")).getText();
+        String expectedMessage = "Я соглашаюсь с условиями обработки и использования моих персональных данных и разрешаю сделать запрос в бюро кредитных историй";
+        Assertions.assertEquals(expectedMessage, actualMessage.trim());
+    }
+
+
+    @Test
+        // ФИО латинскими буквами
+    void shouldTestEngName() {
+        driver.get("http://localhost:9999/");
+        driver.findElement(By.cssSelector("[type='text']")).sendKeys("Petrov Petr");
+        driver.findElement(By.cssSelector("[type='tel']")).sendKeys("+79161234567");
+        driver.findElement(By.cssSelector("[class='checkbox__box']")).click();
+        driver.findElement(By.cssSelector("button")).click();
+        String actualMessage = driver.findElement(By.cssSelector(".input_invalid .input__sub")).getText();
+        String expectedMessage = "Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.";
+        Assertions.assertEquals(expectedMessage, actualMessage.trim());
+    }
+
+
+    @Test
+        // ФИО содержит спецсимволы
+    void shouldTestSpecialSymbol() {
+        driver.get("http://localhost:9999/");
+        driver.findElement(By.cssSelector("[type='text']")).sendKeys("Петров Петр%");
+        driver.findElement(By.cssSelector("[type='tel']")).sendKeys("+79161234567");
+        driver.findElement(By.cssSelector("[class='checkbox__box']")).click();
+        driver.findElement(By.cssSelector("button")).click();
+        String actualMessage = driver.findElement(By.cssSelector(".input_invalid .input__sub")).getText();
         String expectedMessage = "Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.";
         Assertions.assertEquals(expectedMessage, actualMessage.trim());
     }
 
     @Test
-    void shouldTestWrongTel() {
+        // ФИО начинается с -            БАГ БАГ БАГ
+    void shouldTestDashBegin() {
         driver.get("http://localhost:9999/");
-        List<WebElement> textFields = driver.findElements(By.className("input__control"));
-        textFields.get(0).sendKeys("Иванов Иван");
-        textFields.get(1).sendKeys("+712312345678");
-        driver.findElement(By.className("checkbox__box")).click();
-        driver.findElement(By.tagName("button")).click();
-        List<WebElement> redText = driver.findElements(By.className("input__sub"));
-        String actualMessage = redText.get(1).getText();
+        driver.findElement(By.cssSelector("[type='text']")).sendKeys("-Петров Петр");
+        driver.findElement(By.cssSelector("[type='tel']")).sendKeys("+79161234567");
+        driver.findElement(By.cssSelector("[class='checkbox__box']")).click();
+        driver.findElement(By.cssSelector("button")).click();
+        String actualMessage = driver.findElement(By.cssSelector("[data-test-id='order-success']")).getText();
+        String expectedMessage = "Имя и Фамилия указаные неверно. Недопустимы дефисы в начале и конце Фамилии и Имени";
+        Assertions.assertEquals(expectedMessage, actualMessage.trim());
+    }
+
+    @Test
+        // ФИО имеет несколько “-” подряд            БАГ БАГ БАГ
+    void shouldTestTwoDash() {
+        driver.get("http://localhost:9999/");
+        driver.findElement(By.cssSelector("[type='text']")).sendKeys("Петров--Петр");
+        driver.findElement(By.cssSelector("[type='tel']")).sendKeys("+79161234567");
+        driver.findElement(By.cssSelector("[class='checkbox__box']")).click();
+        driver.findElement(By.cssSelector("button")).click();
+        String actualMessage = driver.findElement(By.cssSelector("[data-test-id='order-success']")).getText();
+        String expectedMessage = "Имя и Фамилия указаные неверно. Недопустимы повторяющиеся дефисы";
+        Assertions.assertEquals(expectedMessage, actualMessage.trim());
+    }
+
+
+    @Test
+        // Короткое ФИО - 1 буква                 БАГ БАГ БАГ
+    void shouldTestShortName() {
+        driver.get("http://localhost:9999/");
+        driver.findElement(By.cssSelector("[type='text']")).sendKeys("П");
+        driver.findElement(By.cssSelector("[type='tel']")).sendKeys("+79161234567");
+        driver.findElement(By.cssSelector("[class='checkbox__box']")).click();
+        driver.findElement(By.cssSelector("button")).click();
+        String actualMessage = driver.findElement(By.cssSelector("[data-test-id='order-success']")).getText();
+        String expectedMessage = "Имя и Фамилия указаные неверно. Фамилия и Имя должны разделяться пробелом";
+        Assertions.assertEquals(expectedMessage, actualMessage.trim());
+    }
+
+    @Test
+        // Длинное ФИО                  БАГ БАГ БАГ
+    void shouldTestLongName() {
+        driver.get("http://localhost:9999/");
+        driver.findElement(By.cssSelector("[type='text']")).sendKeys("Подловжаыдлвоашыжмвомлодлодлофлыоуцоыдлваофва жфвлаофждлвоафвлафываущшцудцлаываылфожлваофыщвшафлудфылофудлцащцаофдываодфлвадлфо");
+        driver.findElement(By.cssSelector("[type='tel']")).sendKeys("+79161234567");
+        driver.findElement(By.cssSelector("[class='checkbox__box']")).click();
+        driver.findElement(By.cssSelector("button")).click();
+        String actualMessage = driver.findElement(By.cssSelector("[data-test-id='order-success']")).getText();
+        String expectedMessage = "Имя и Фамилия указаные неверно. Слишком много символов.";
+        Assertions.assertEquals(expectedMessage, actualMessage.trim());
+    }
+
+    @Test
+        // Невалидный Тел
+    void shouldTestNotValidTel() {
+        driver.get("http://localhost:9999/");
+        driver.findElement(By.cssSelector("[type='text']")).sendKeys("Петров Петр");
+        driver.findElement(By.cssSelector("[type='tel']")).sendKeys("+79161234");
+        driver.findElement(By.cssSelector("[class='checkbox__box']")).click();
+        driver.findElement(By.cssSelector("button")).click();
+        String actualMessage = driver.findElement(By.cssSelector(".input_invalid .input__sub")).getText();
+        String expectedMessage = "Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.";
+        Assertions.assertEquals(expectedMessage, actualMessage.trim());
+    }
+
+
+    @Test
+        // Невалидный Тел
+    void shouldTestNotValidTelPlus() {
+        driver.get("http://localhost:9999/");
+        driver.findElement(By.cssSelector("[type='text']")).sendKeys("Петров Петр");
+        driver.findElement(By.cssSelector("[type='tel']")).sendKeys("79161234567+");
+        driver.findElement(By.cssSelector("[class='checkbox__box']")).click();
+        driver.findElement(By.cssSelector("button")).click();
+        String actualMessage = driver.findElement(By.cssSelector(".input_invalid .input__sub")).getText();
         String expectedMessage = "Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.";
         Assertions.assertEquals(expectedMessage, actualMessage.trim());
     }
